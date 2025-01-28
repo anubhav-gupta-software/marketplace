@@ -6,11 +6,28 @@ const app = express();
 
 
 dotenv.config();
+
+
+app.use(express.json());//allows us to request json data in the req.body
+//this is a middleware
+
+
 app.get("/",(req, res)=>{
     res.send("The server is running bro123");
 });
 
-app.post("/products", async (req, res)=>{
+app.delete("/api/products/:id", async (req, res)=>{
+    const {id} = req.params;
+    console.log(id);
+    try {
+        await Product.findByIdAndDelete(id);
+        res.status(200).json({success: true, message: "Product Deleted Successfully"});
+    } catch (error) {
+        res.status(404).json({success: false, message: "Product Not Found"});
+    }
+});
+
+app.post("/api/products", async (req, res)=>{
     const product = req.body; //user will send this data
     if(!product.name||!product.price||!product.image){
         return res.status(400).json({success: false, message: "Please provide all fields!"});
