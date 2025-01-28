@@ -20,10 +20,13 @@ app.delete("/api/products/:id", async (req, res)=>{
     const {id} = req.params;
     console.log(id);
     try {
-        await Product.findByIdAndDelete(id);
+        const deletedProduct = await Product.findByIdAndDelete(id);
+        if(deletedProduct == null){
+            return res.status(404).json({success: false, message: "Product Not Found"});
+        }
         res.status(200).json({success: true, message: "Product Deleted Successfully"});
     } catch (error) {
-        res.status(404).json({success: false, message: "Product Not Found"});
+        res.status(500).json({success: false, message: "Internal Server Error"});
     }
 });
 
